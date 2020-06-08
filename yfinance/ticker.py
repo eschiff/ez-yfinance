@@ -35,10 +35,11 @@ from yfinance.constants import TimePeriods, QUARTERLY, YEARLY
 
 _logger = logging.getLogger(__file__)
 
+
 class Ticker(TickerBase):
 
     def __repr__(self):
-        return 'yfinance.Ticker object <%s>' % self.ticker
+        return f'yfinance.Ticker object <{self.ticker}>'
 
     def _download_options(self, date=None) -> Dict:
         url = f'{self._base_url}/v7/finance/options/{self.ticker}'
@@ -75,7 +76,7 @@ class Ticker(TickerBase):
             data['lastTradeDate'] = data['lastTradeDate'].tz_localize(tz)
         return data
 
-    def option_chain(self, date: Union[str, None]=None, tz=None):
+    def option_chain(self, date: Union[str, None] = None, tz=None):
         if not self._expirations:
             self._download_options()
 
@@ -108,7 +109,7 @@ class Ticker(TickerBase):
         """
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
-        
+
         _logger.info(f'Returning {self._historical_data_interval} interval history'
                      f' for period {self._historical_data_period}')
 
@@ -141,7 +142,7 @@ class Ticker(TickerBase):
         """
         if self._institutional_holders.empty:
             self._load_holders_data()
-        
+
         return self._institutional_holders
 
     @property
@@ -177,7 +178,7 @@ class Ticker(TickerBase):
         """
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
-        
+
         _logger.info(f'Returning {self._historical_data_interval} interval split history'
                      f' for period {self._historical_data_period}')
 
@@ -232,7 +233,7 @@ class Ticker(TickerBase):
         """
         if not self._info:
             self._load_info()
-        
+
         return self._info
 
     @property
@@ -251,7 +252,7 @@ class Ticker(TickerBase):
         """
         if not self._calendar:
             self._load_events()
-        
+
         return self._calendar
 
     @property
@@ -269,7 +270,7 @@ class Ticker(TickerBase):
         """
         if self._recommendations.empty:
             self._load_recommendations()
-        
+
         return self._recommendations
 
     @property
@@ -286,7 +287,7 @@ class Ticker(TickerBase):
         """
         if self._earnings[YEARLY].empty:
             self._load_earnings()
-        
+
         return self._earnings[YEARLY]
 
     @property
@@ -303,7 +304,7 @@ class Ticker(TickerBase):
         """
         if self._earnings[QUARTERLY].empty:
             self._load_earnings()
-        
+
         return self._earnings[QUARTERLY]
 
     @property
@@ -337,7 +338,7 @@ class Ticker(TickerBase):
         """
         if self._financials[YEARLY].empty:
             self._load_financials_data()
-        
+
         return self._financials[YEARLY]
 
     @property
@@ -371,7 +372,7 @@ class Ticker(TickerBase):
         """
         if self._financials[QUARTERLY].empty:
             self._load_financials_data()
-        
+
         return self._financials[QUARTERLY]
 
     @property
@@ -409,7 +410,7 @@ class Ticker(TickerBase):
         """
         if self._balancesheet[YEARLY].empty:
             self._load_financials_data()
-        
+
         return self._balancesheet[YEARLY]
 
     @property
@@ -447,7 +448,7 @@ class Ticker(TickerBase):
         """
         if self._balancesheet[QUARTERLY].empty:
             self._load_financials_data()
-        
+
         return self._balancesheet[QUARTERLY]
 
     @property
@@ -479,7 +480,7 @@ class Ticker(TickerBase):
         """
         if self._cashflow[YEARLY].empty:
             self._load_financials_data()
-        
+
         return self._cashflow[YEARLY]
 
     @property
@@ -510,7 +511,7 @@ class Ticker(TickerBase):
         """
         if self._cashflow[QUARTERLY].empty:
             self._load_financials_data()
-        
+
         return self._cashflow[QUARTERLY]
 
     @property
