@@ -14,13 +14,12 @@ def test_TickerBase_init(ticker_symbol):
     assert ticker._financials_data is None
 
 
-
 @patch('yfinance.base.requests')
-def test_TickerBase_get_historical_data(requests_mock, ticker_symbol, historical_data_resp):
+def test_TickerBase_get_history(requests_mock, ticker_symbol, historical_data_resp):
     requests_mock.get.return_value = historical_data_resp
 
     ticker = TickerBase(ticker_symbol)
-    ticker.get_historical_data()
+    ticker.get_history()
 
     assert isinstance(ticker._historical_data, pd.DataFrame)
 
@@ -48,9 +47,9 @@ def test_TickerBase_financials_data(utils_mock, ticker_symbol):
 
 
 @patch('yfinance.base.requests')
-def test_TickerBase_get_historical_data_fails_yahoo_down(requests_mock, ticker_symbol, yahoo_down_resp):
+def test_TickerBase_get_history_fails_yahoo_down(requests_mock, ticker_symbol, yahoo_down_resp):
     requests_mock.get.return_value = yahoo_down_resp
 
     ticker = TickerBase(ticker_symbol)
     with pytest.raises(RuntimeError):
-        ticker.get_historical_data()
+        ticker.get_history()
