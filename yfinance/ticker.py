@@ -41,7 +41,7 @@ class Ticker(TickerBase):
         return 'yfinance.Ticker object <%s>' % self.ticker
 
     def _download_options(self, date=None) -> Dict:
-        url = f"{self._base_url}/v7/finance/options/{self.ticker}"
+        url = f'{self._base_url}/v7/finance/options/{self.ticker}'
         if date:
             url += f'?date={date}'
 

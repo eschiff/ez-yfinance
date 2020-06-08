@@ -31,6 +31,7 @@ import numpy as np
 import re
 from typing import Dict, Union
 import sys
+
 try:
     from urllib.parse import quote as urlencode
 except ImportError:
@@ -39,6 +40,7 @@ except ImportError:
 from yfinance import utils, shared, QUARTERLY, YEARLY, TimePeriods, TimeIntervals
 
 _logger = logging.getLogger(__file__)
+
 
 class TickerBase():
     def __init__(self, ticker: str, proxy: str = None):
@@ -68,23 +70,23 @@ class TickerBase():
         self._historical_data_period = None
         self._historical_data_interval = None
 
-         # setup proxy in requests format
+        # setup proxy in requests format
         if proxy is not None:
             if isinstance(proxy, dict) and 'https' in proxy:
                 proxy = proxy['https']
             proxy = {'https': proxy}
-        self._proxy =  proxy
+        self._proxy = proxy
 
-    def get_history(self, 
-                    period: TimePeriods = TimePeriods.Max, 
+    def get_history(self,
+                    period: TimePeriods = TimePeriods.Max,
                     interval: TimeIntervals = TimeIntervals.Daily,
-                    start: Union[str, datetime, None] = None, 
-                    end: Union[str, datetime, None] = None, 
-                    prepost: bool=False,
-                    auto_adjust: bool=True, 
-                    back_adjust: bool=False,
-                    rounding: bool=True, 
-                    tz=None, 
+                    start: Union[str, datetime, None] = None,
+                    end: Union[str, datetime, None] = None,
+                    prepost: bool = False,
+                    auto_adjust: bool = True,
+                    back_adjust: bool = False,
+                    rounding: bool = True,
+                    tz=None,
                     **kwargs) -> pd.DataFrame:
         '''
         Args:
@@ -123,10 +125,10 @@ class TickerBase():
             params = {'period1': start, 'period2': end}
         else:
             params = {'range': period.value}
-        
-        self._historical_data_period = period.name if not start \
-            else (f'{datetime.fromtimestamp(start).strftime("%Y-%m-%d")}'
-                  f' - {datetime.fromtimestamp(end).strftime("%Y-%m-%d")}')
+
+        self._historical_data_period = period.name if not start else (
+            f'{datetime.fromtimestamp(start).strftime("%Y-%m-%d")} '
+            f'- {datetime.fromtimestamp(end).strftime("%Y-%m-%d")}')
         self._historical_data_interval = interval.name
 
         params['interval'] = interval.value
@@ -235,7 +237,7 @@ class TickerBase():
         return df
 
     # ------------------------
-        
+
     def _load_holders_data(self):
         holders_url = f'{self._scrape_url}/{self.ticker}/holders'
         holders = pd.read_html(holders_url)
@@ -247,13 +249,14 @@ class TickerBase():
                     self._institutional_holders['Date Reported'])
             if '% Out' in self._institutional_holders:
                 self._institutional_holders['% Out'] = self._institutional_holders[
-                    '% Out'].str.replace('%', '').astype(float)/100
+                                                           '% Out'].str.replace('%', '').astype(
+                    float) / 100
         else:
             _logger.warning("No holders found")
-    
+
     def _load_recommendations(self):
         rec = pd.DataFrame(
-                self.fundamentals_data['upgradeDowngradeHistory']['history'])
+            self.fundamentals_data['upgradeDowngradeHistory']['history'])
         rec['earningsDate'] = pd.to_datetime(
             rec['epochGradeDate'], unit='s')
         rec.set_index('earningsDate', inplace=True)
@@ -261,7 +264,7 @@ class TickerBase():
         rec.columns = utils.camel2title(rec.columns)
         self._recommendations = rec[[
             'Firm', 'To Grade', 'From Grade', 'Action']].sort_index()
-    
+
     def _load_sustainability(self):
         d = {}
         if isinstance(self.fundamentals_data.get('esgScores'), dict):
@@ -279,7 +282,7 @@ class TickerBase():
                 ['maxAge', 'ratingYear', 'ratingMonth'])]
         else:
             _logger.warning('Unable to identify sustainability data')
-    
+
     def _load_info(self):
         self._info = {}
         items = ['summaryProfile', 'summaryDetail', 'quoteType',
@@ -289,7 +292,8 @@ class TickerBase():
                 self._info.update(self.fundamentals_data[item])
 
         try:
-            self._info['regularMarketPrice'] = self.fundamentals_data['financialData']['currentPrice']
+            self._info['regularMarketPrice'] = self.fundamentals_data['financialData'][
+                'currentPrice']
         except KeyError:
             _logger.warning('Unable to locate price data!')
 
@@ -299,13 +303,13 @@ class TickerBase():
             self._info['logo_url'] = f'https://logo.clearbit.com/{domain}'
         except Exception:
             _logger.warning('Exception occurred when trying to identify logo url')
-    
+
     def _load_events(self):
         cal = pd.DataFrame(self.fundamentals_data['calendarEvents']['earnings'])
         cal['earningsDate'] = pd.to_datetime(cal['earningsDate'], unit='s')
         self._calendar = cal.T
         self._calendar.index = utils.camel2title(self._calendar.index)
-    
+
     def _load_financials_data(self):
         def _cleanup(data: Dict) -> pd.DataFrame:
             df = pd.DataFrame(data).drop(columns=['maxAge'])
@@ -326,9 +330,9 @@ class TickerBase():
             return df
 
         for key in (
-            (self._cashflow, 'cashflowStatement', 'cashflowStatements'),
-            (self._balancesheet, 'balanceSheet', 'balanceSheetStatements'),
-            (self._financials, 'incomeStatement', 'incomeStatementHistory')
+                (self._cashflow, 'cashflowStatement', 'cashflowStatements'),
+                (self._balancesheet, 'balanceSheet', 'balanceSheetStatements'),
+                (self._financials, 'incomeStatement', 'incomeStatementHistory')
         ):
 
             item = key[1] + 'History'
@@ -337,13 +341,12 @@ class TickerBase():
             else:
                 _logger.warning(f'Unable to identify yearly {key[1]}')
 
-            item = key[1]+'HistoryQuarterly'
+            item = key[1] + 'HistoryQuarterly'
             if isinstance(self.financials_data.get(item), dict):
                 key[0][QUARTERLY] = _cleanup(self.financials_data[item][key[2]])
             else:
                 _logger.warning(f'Unable to identify quarterly {key[1]}')
 
-    
     def _load_earnings(self):
         if isinstance(self.financials_data.get('earnings'), dict):
             earnings = self.financials_data['earnings']['financialsChart']
@@ -359,14 +362,13 @@ class TickerBase():
         else:
             _logger.warning(f'Unable to locate earnings data')
 
-    
     def _load_dividends(self):
         if self._historical_data is None:
             self.get_history(period=TimePeriods.Max)
 
         dividends = self._historical_data['Dividends']
         self._dividends = dividends[dividends != 0]
-        
+
     @property
     def fundamentals_data(self) -> Dict:
         if self._fundamentals_data is None:
@@ -374,7 +376,7 @@ class TickerBase():
                 f'{self._scrape_url}/{self.ticker}', self._proxy)
 
         return self._fundamentals_data
-    
+
     @property
     def financials_data(self) -> Dict:
         if self._financials_data is None:

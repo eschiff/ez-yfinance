@@ -33,26 +33,26 @@ from yfinance.ticker import Ticker
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 _logger = logging.getLogger(__file__)
 
-def pdr_override():
-    """
-    make pandas datareader optional
-    otherwise can be called via fix_yahoo_finance.download(...)
-    """
-    try:
-        import pandas_datareader
-        pandas_datareader.data.get_data_yahoo = download
-        pandas_datareader.data.get_data_yahoo_actions = download
-        pandas_datareader.data.DataReader = download
-    except Exception:
-        pass
+# def pdr_override():
+#     """
+#     make pandas datareader optional
+#     otherwise can be called via fix_yahoo_finance.download(...)
+#     """
+#     try:
+#         import pandas_datareader
+#         pandas_datareader.data.get_data_yahoo = download
+#         pandas_datareader.data.get_data_yahoo_actions = download
+#         pandas_datareader.data.DataReader = download
+#     except Exception:
+#         pass
 
 
 __all__ = [
     # download, 
-    Ticker, 
+    Ticker,
     # Tickers, 
-    pdr_override, 
+    # pdr_override,
     YEARLY,
-    QUARTERLY, 
-    TimeIntervals, 
+    QUARTERLY,
+    TimeIntervals,
     TimePeriods]
