@@ -21,12 +21,11 @@
 
 from __future__ import print_function
 
-import requests as _requests
-import re as _re
+import requests as requests
 import pandas as pd
 import numpy as np
-import sys as _sys
-import re as _re
+import sys
+import re
 
 try:
     import ujson as _json
@@ -50,10 +49,10 @@ def init_financial_df_dict():
 
 
 def get_json(url, proxy=None):
-    html = _requests.get(url=url, proxies=proxy).text
+    html = requests.get(url=url, proxies=proxy).text
 
     if "QuoteSummaryStore" not in html:
-        html = _requests.get(url=url, proxies=proxy).text
+        html = requests.get(url=url, proxies=proxy).text
         if "QuoteSummaryStore" not in html:
             return {}
 
@@ -64,14 +63,14 @@ def get_json(url, proxy=None):
 
     # return data
     new_data = _json.dumps(data).replace('{}', 'null')
-    new_data = _re.sub(
+    new_data = re.sub(
         r'\{[\'|\"]raw[\'|\"]:(.*?),(.*?)\}', r'\1', new_data)
 
     return _json.loads(new_data)
 
 
 def camel2title(o):
-    return [_re.sub("([a-z])([A-Z])", "\g<1> \g<2>", i).title() for i in o]
+    return [re.sub("([a-z])([A-Z])", "\g<1> \g<2>", i).title() for i in o]
 
 
 def auto_adjust(data):
@@ -129,11 +128,11 @@ def parse_quotes(data, tz=None):
         adjclose = data["indicators"]["adjclose"][0]["adjclose"]
 
     quotes = pd.DataFrame({"Open": opens,
-                            "High": highs,
-                            "Low": lows,
-                            "Close": closes,
-                            "Adj Close": adjclose,
-                            "Volume": volumes})
+                           "High": highs,
+                           "Low": lows,
+                           "Close": closes,
+                           "Adj Close": adjclose,
+                           "Volume": volumes})
 
     quotes.index = pd.to_datetime(timestamps, unit="s")
     quotes.sort_index(inplace=True)
@@ -169,7 +168,7 @@ def parse_actions(data, tz=None):
             if tz is not None:
                 splits.index = splits.index.tz_localize(tz)
             splits["Stock Splits"] = splits["numerator"] / \
-                splits["denominator"]
+                                     splits["denominator"]
             splits = splits["Stock Splits"]
 
     return dividends, splits
@@ -190,7 +189,7 @@ class ProgressBar:
             self.elapsed = self.iterations
         self.update_iteration(1)
         print('\r' + str(self), end='')
-        _sys.stdout.flush()
+        sys.stdout.flush()
         print()
 
     def animate(self, iteration=None):
@@ -201,7 +200,7 @@ class ProgressBar:
             self.elapsed += iteration
 
         print('\r' + str(self), end='')
-        _sys.stdout.flush()
+        sys.stdout.flush()
         self.update_iteration()
 
     def update_iteration(self, val=None):
@@ -215,11 +214,11 @@ class ProgressBar:
         all_full = self.width - 2
         num_hashes = int(round((percent_done / 100.0) * all_full))
         self.prog_bar = '[' + self.fill_char * \
-            num_hashes + ' ' * (all_full - num_hashes) + ']'
+                        num_hashes + ' ' * (all_full - num_hashes) + ']'
         pct_place = (len(self.prog_bar) // 2) - len(str(percent_done))
         pct_string = '%d%%' % percent_done
         self.prog_bar = self.prog_bar[0:pct_place] + \
-            (pct_string + self.prog_bar[pct_place + len(pct_string):])
+                        (pct_string + self.prog_bar[pct_place + len(pct_string):])
 
     def __str__(self):
         return str(self.prog_bar)
