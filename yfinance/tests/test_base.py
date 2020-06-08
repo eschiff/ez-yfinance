@@ -9,7 +9,7 @@ def test_TickerBase_init(ticker_symbol):
     ticker = TickerBase(ticker_symbol.lower())
 
     assert ticker.ticker == ticker_symbol
-    assert ticker._historical_data is None
+    assert ticker._historical_data.empty
     assert ticker._fundamentals_data is None
     assert ticker._financials_data is None
 
