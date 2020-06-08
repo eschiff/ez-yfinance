@@ -22,47 +22,39 @@
 from __future__ import print_function
 
 # import time as _time
-import datetime as _datetime
-import requests as _requests
-import pandas as _pd
-# import numpy as _np
+import datetime as datetime
+import requests as requests
+import pandas as pd
+import logging
+from typing import Union, Dict
 
-# import json as _json
-# import re as _re
 from collections import namedtuple as _namedtuple
 
-from .base import TickerBase
+from yfinance.base import TickerBase
+from yfinance.constants import TimePeriods, QUARTERLY, YEARLY
 
+_logger = logging.getLogger(__file__)
 
 class Ticker(TickerBase):
 
     def __repr__(self):
         return 'yfinance.Ticker object <%s>' % self.ticker
 
-    def _download_options(self, date=None, proxy=None):
-        if date is None:
-            url = "{}/v7/finance/options/{}".format(
-                self._base_url, self.ticker)
-        else:
-            url = "{}/v7/finance/options/{}?date={}".format(
-                self._base_url, self.ticker, date)
+    def _download_options(self, date=None) -> Dict:
+        url = f"{self._base_url}/v7/finance/options/{self.ticker}"
+        if date:
+            url += f'?date={date}'
 
-        # setup proxy in requests format
-        if proxy is not None:
-            if isinstance(proxy, dict) and "https" in proxy:
-                proxy = proxy["https"]
-            proxy = {"https": proxy}
-
-        r = _requests.get(url=url, proxies=proxy).json()
+        r = requests.get(url=url, proxies=self._proxy).json()
         if r['optionChain']['result']:
             for exp in r['optionChain']['result'][0]['expirationDates']:
-                self._expirations[_datetime.datetime.fromtimestamp(
+                self._expirations[datetime.datetime.fromtimestamp(
                     exp).strftime('%Y-%m-%d')] = exp
             return r['optionChain']['result'][0]['options'][0]
         return {}
 
-    def _options2df(self, opt, tz=None):
-        data = _pd.DataFrame(opt).reindex(columns=[
+    def _options2df(self, opt: Dict, tz=None) -> pd.DataFrame:
+        data = pd.DataFrame(opt).reindex(columns=[
             'contractSymbol',
             'lastTradeDate',
             'strike',
@@ -78,25 +70,21 @@ class Ticker(TickerBase):
             'contractSize',
             'currency'])
 
-        data['lastTradeDate'] = _pd.to_datetime(
-            data['lastTradeDate'], unit='s')
+        data['lastTradeDate'] = pd.todatetime(data['lastTradeDate'], unit='s')
         if tz is not None:
             data['lastTradeDate'] = data['lastTradeDate'].tz_localize(tz)
         return data
 
-    def option_chain(self, date=None, proxy=None, tz=None):
-        if date is None:
-            options = self._download_options(proxy=proxy)
-        else:
-            if not self._expirations:
-                self._download_options()
+    def option_chain(self, date: Union[str, None]=None, tz=None):
+        if not self._expirations:
+            self._download_options()
+
+        if date is not None:
             if date not in self._expirations:
-                raise ValueError(
-                    "Expiration `%s` cannot be found. "
-                    "Available expiration are: [%s]" % (
-                        date, ', '.join(self._expirations)))
-            date = self._expirations[date]
-            options = self._download_options(date, proxy=proxy)
+                raise ValueError(f"Expiration `{date}` cannot be found. "
+                                 f"Available expiration are: {', '.join(self._expirations)}")
+            expirations_date = self._expirations[date]
+            options = self._download_options(expirations_date)
 
         return _namedtuple('Options', ['calls', 'puts'])(**{
             "calls": self._options2df(options['calls'], tz=tz),
@@ -106,91 +94,138 @@ class Ticker(TickerBase):
     # ------------------------
 
     @property
-    def isin(self):
-        return self.get_isin()
-
-    @property
     def major_holders(self):
-        return self.get_major_holders()
+        if not self._major_holders:
+            self._load_holders_data()
+
+        return self._major_holders
 
     @property
     def institutional_holders(self):
-        return self.get_institutional_holders()
+        if not self._institutional_holders:
+            self._load_holders_data()
+        
+        return self._institutional_holders
 
     @property
     def dividends(self):
-        return self.get_dividends()
+        if not self._historical_data:
+            self.get_historical_data(period=TimePeriods.Max)
 
-    @property
-    def dividends(self):
-        return self.get_dividends()
+        _logger.info(f'Returning dividends for period {self._historical_data_period}'
+                     f' with interval {self._historical_data_interval}')
+
+        dividends = self._historical_data["Dividends"]
+        return dividends[dividends != 0]
 
     @property
     def splits(self):
-        return self.get_splits()
+        if not self._historical_data:
+            self.get_historical_data(period=TimePeriods.Max)
+        
+        _logger.info(f'Returning splits for period {self._historical_data_period}'
+                     f' with interval {self._historical_data_interval}')
+
+        splits = self._historical_data["Stock Splits"]
+        return splits[splits != 0]
 
     @property
     def actions(self):
-        return self.get_actions()
+        if not self._historical_data:
+            self.get_historical_data(period=TimePeriods.Max)
+
+        _logger.info(f'Returning actions for period {self._historical_data_period}'
+                     f' with interval {self._historical_data_interval}')
+
+        actions = self._historical_data[["Dividends", "Stock Splits"]]
+        self._actions = actions[actions != 0].dropna(how='all').fillna(0)
 
     @property
     def info(self):
-        return self.get_info()
+        if not self._info:
+            self._load_info()
+        
+        return self._info
 
     @property
     def calendar(self):
-        return self.get_calendar()
+        if not self._calendar:
+            self._load_events()
+        
+        return self._calendar
 
     @property
     def recommendations(self):
-        return self.get_recommendations()
+        if not self._recommendations:
+            self._load_recommendations()
+        
+        return self._recommendations
 
     @property
     def earnings(self):
-        return self.get_earnings()
+        if self._earnings[YEARLY].empty:
+            self._load_earnings()
+        
+        return self._earnings[YEARLY]
 
     @property
     def quarterly_earnings(self):
-        return self.get_earnings(freq='quarterly')
+        if self._earnings[QUARTERLY].empty:
+            self._load_earnings()
+        
+        return self._earnings[QUARTERLY]
 
     @property
     def financials(self):
-        return self.get_financials()
+        if self._financials[YEARLY].empty:
+            self._load_financials_data()
+        
+        return self._financials[YEARLY]
 
     @property
     def quarterly_financials(self):
-        return self.get_financials(freq='quarterly')
+        if self._financials[QUARTERLY].empty:
+            self._load_financials_data()
+        
+        return self._financials[QUARTERLY]
 
     @property
     def balance_sheet(self):
-        return self.get_balancesheet()
+        if self._balancesheet[YEARLY].empty:
+            self._load_financials_data()
+        
+        return self._balancesheet[YEARLY]
 
     @property
     def quarterly_balance_sheet(self):
-        return self.get_balancesheet(freq='quarterly')
-
-    @property
-    def balancesheet(self):
-        return self.get_balancesheet()
-
-    @property
-    def quarterly_balancesheet(self):
-        return self.get_balancesheet(freq='quarterly')
+        if self._balancesheet[QUARTERLY].empty:
+            self._load_financials_data()
+        
+        return self._balancesheet[QUARTERLY]
 
     @property
     def cashflow(self):
-        return self.get_cashflow()
+        if self._cashflow[YEARLY].empty:
+            self._load_financials_data()
+        
+        return self._cashflow[YEARLY]
 
     @property
     def quarterly_cashflow(self):
-        return self.get_cashflow(freq='quarterly')
+        if self._cashflow[QUARTERLY].empty:
+            self._load_financials_data()
+        
+        return self._cashflow[QUARTERLY]
 
     @property
     def sustainability(self):
-        return self.get_sustainability()
+        if not self._sustainability:
+            self._load_sustainability()
+
+        return self._sustainability
 
     @property
-    def options(self):
+    def options_expiration_dates(self):
         if not self._expirations:
             self._download_options()
         return tuple(self._expirations.keys())

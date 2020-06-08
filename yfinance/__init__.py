@@ -22,10 +22,16 @@
 __version__ = "0.1.54"
 __author__ = "Ran Aroussi"
 
-from .ticker import Ticker
-from .tickers import Tickers
-from .multi import download
+import logging
+import sys
 
+from yfinance.constants import YEARLY, QUARTERLY, TimePeriods, TimeIntervals
+# from yfinance.multi import download
+# from yfinance.tickers import Tickers
+from yfinance.ticker import Ticker
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+_logger = logging.getLogger(__file__)
 
 def pdr_override():
     """
@@ -41,4 +47,12 @@ def pdr_override():
         pass
 
 
-__all__ = ['download', 'Ticker', 'Tickers', 'pdr_override']
+__all__ = [
+    # download, 
+    Ticker, 
+    # Tickers, 
+    pdr_override, 
+    YEARLY,
+    QUARTERLY, 
+    TimeIntervals, 
+    TimePeriods]

@@ -23,8 +23,8 @@ from __future__ import print_function
 
 import requests as _requests
 import re as _re
-import pandas as _pd
-import numpy as _np
+import pandas as pd
+import numpy as np
 import sys as _sys
 import re as _re
 
@@ -33,13 +33,20 @@ try:
 except ImportError:
     import json as _json
 
+from yfinance import YEARLY, QUARTERLY
+
 
 def empty_df(index=[]):
-    empty = _pd.DataFrame(index=index, data={
-        'Open': _np.nan, 'High': _np.nan, 'Low': _np.nan,
-        'Close': _np.nan, 'Adj Close': _np.nan, 'Volume': _np.nan})
+    empty = pd.DataFrame(index=index, data={
+        'Open': np.nan, 'High': np.nan, 'Low': np.nan,
+        'Close': np.nan, 'Adj Close': np.nan, 'Volume': np.nan})
     empty.index.name = 'Date'
     return empty
+
+
+def init_financial_df_dict():
+    return {YEARLY: empty_df(),
+            QUARTERLY: empty_df()}
 
 
 def get_json(url, proxy=None):
@@ -121,14 +128,14 @@ def parse_quotes(data, tz=None):
     if "adjclose" in data["indicators"]:
         adjclose = data["indicators"]["adjclose"][0]["adjclose"]
 
-    quotes = _pd.DataFrame({"Open": opens,
+    quotes = pd.DataFrame({"Open": opens,
                             "High": highs,
                             "Low": lows,
                             "Close": closes,
                             "Adj Close": adjclose,
                             "Volume": volumes})
 
-    quotes.index = _pd.to_datetime(timestamps, unit="s")
+    quotes.index = pd.to_datetime(timestamps, unit="s")
     quotes.sort_index(inplace=True)
 
     if tz is not None:
@@ -138,15 +145,15 @@ def parse_quotes(data, tz=None):
 
 
 def parse_actions(data, tz=None):
-    dividends = _pd.DataFrame(columns=["Dividends"])
-    splits = _pd.DataFrame(columns=["Stock Splits"])
+    dividends = pd.DataFrame(columns=["Dividends"])
+    splits = pd.DataFrame(columns=["Stock Splits"])
 
     if "events" in data:
         if "dividends" in data["events"]:
-            dividends = _pd.DataFrame(
+            dividends = pd.DataFrame(
                 data=list(data["events"]["dividends"].values()))
             dividends.set_index("date", inplace=True)
-            dividends.index = _pd.to_datetime(dividends.index, unit="s")
+            dividends.index = pd.to_datetime(dividends.index, unit="s")
             dividends.sort_index(inplace=True)
             if tz is not None:
                 dividends.index = dividends.index.tz_localize(tz)
@@ -154,10 +161,10 @@ def parse_actions(data, tz=None):
             dividends.columns = ["Dividends"]
 
         if "splits" in data["events"]:
-            splits = _pd.DataFrame(
+            splits = pd.DataFrame(
                 data=list(data["events"]["splits"].values()))
             splits.set_index("date", inplace=True)
-            splits.index = _pd.to_datetime(splits.index, unit="s")
+            splits.index = pd.to_datetime(splits.index, unit="s")
             splits.sort_index(inplace=True)
             if tz is not None:
                 splits.index = splits.index.tz_localize(tz)

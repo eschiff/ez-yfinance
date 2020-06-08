@@ -1,6 +1,15 @@
 Change Log
 ===========
 
+0.2.0
+------
+- refactored TickerBase and Ticker classes to isolate features for easier debugging and to avoid
+  retrieving unnecessary data
+- fixed bug in retrieving financial data
+- added logging statements
+- added tests
+
+
 0.1.54
 ------
 - ISIN lookup working with intl. tickers
