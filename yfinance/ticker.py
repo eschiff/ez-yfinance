@@ -94,6 +94,27 @@ class Ticker(TickerBase):
     # ------------------------
 
     @property
+    def history(self) -> pd.DataFrame:
+        """Get ticker price data for a given period.
+
+        To update the time periods or interval of data, call get_history with custom time period
+
+        Eg.:
+                      Open    High     Low   Close    Volume  Dividends  Stock Splits
+            Date
+            2020-03-06  162.16  162.66  155.57  161.12  72821100        0.0             0
+            2020-03-09  150.58  157.31  149.58  150.20  70419300        0.0             0
+            ...            ...     ...     ...     ...       ...        ...           ...
+        """
+        if self._historical_data.empty:
+            self.get_history(period=TimePeriods.Max)
+        
+        _logger.info(f'Returning history for period {self._historical_data_period}'
+                     f' with interval {self._historical_data_interval}')
+
+        return self._historical_data
+
+    @property
     def major_holders(self) -> pd.DataFrame:
         """General Info about major holders
 
@@ -127,13 +148,15 @@ class Ticker(TickerBase):
     def dividends(self) -> pd.Series:
         """Dividends by date
 
+        To update the time periods or interval of data, call get_history with custom time period
+
         Eg.: 
             Date
             2003-02-19    0.08
             2003-10-15    0.16
         """
         if self._historical_data.empty:
-            self.get_historical_data(period=TimePeriods.Max)
+            self.get_history(period=TimePeriods.Max)
 
         _logger.info(f'Returning dividends for period {self._historical_data_period}'
                      f' with interval {self._historical_data_interval}')
@@ -145,13 +168,15 @@ class Ticker(TickerBase):
     def splits(self) -> pd.Series:
         """Splits by date
 
+        To update the time periods or interval of data, call get_history with custom time period
+
         Eg.:
             Date
             1987-09-21    2.0
             1990-04-16    2.0
         """
         if self._historical_data.empty:
-            self.get_historical_data(period=TimePeriods.Max)
+            self.get_history(period=TimePeriods.Max)
         
         _logger.info(f'Returning splits for period {self._historical_data_period}'
                      f' with interval {self._historical_data_interval}')
@@ -163,6 +188,8 @@ class Ticker(TickerBase):
     def actions(self) -> pd.DataFrame:
         """Dividends and Stock Splits by date
 
+        To update the time periods or interval of data, call get_history with custom time period
+
         Eg.:
                         Dividends  Stock Splits
             Date
@@ -173,7 +200,7 @@ class Ticker(TickerBase):
             2020-05-20       0.51           0.0
         """
         if self._historical_data.empty:
-            self.get_historical_data(period=TimePeriods.Max)
+            self.get_history(period=TimePeriods.Max)
 
         _logger.info(f'Returning actions for period {self._historical_data_period}'
                      f' with interval {self._historical_data_interval}')

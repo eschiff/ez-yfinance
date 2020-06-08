@@ -75,21 +75,22 @@ class TickerBase():
             proxy = {'https': proxy}
         self._proxy =  proxy
 
-    def get_historical_data(self, 
-                            period: TimePeriods = TimePeriods.Month, 
-                            interval: TimeIntervals = TimeIntervals.Day,
-                            start: Union[str, datetime] = None, 
-                            end: Union[str, datetime] = None, 
-                            prepost: bool=False,
-                            auto_adjust: bool=True, 
-                            back_adjust: bool=False,
-                            rounding: bool=True, 
-                            tz=None, 
-                            **kwargs) -> pd.DataFrame:
+    def get_history(self, 
+                    period: TimePeriods = TimePeriods.Month, 
+                    interval: TimeIntervals = TimeIntervals.Daily,
+                    start: Union[str, datetime, None] = None, 
+                    end: Union[str, datetime, None] = None, 
+                    prepost: bool=False,
+                    auto_adjust: bool=True, 
+                    back_adjust: bool=False,
+                    rounding: bool=True, 
+                    tz=None, 
+                    **kwargs) -> pd.DataFrame:
         '''
         Args:
-            period : (TimePeriods) Use this or start and end
-            interval : (TimeIntervals) 
+            period : (TimePeriods) How far back to query historical data. 
+                Use this or start and end.
+            interval : (TimeIntervals) The interval for data queried
             start: (str YYYY-MM-DD or datetime) - default is 1900-01-01
             end: (str YYYY-MM-DD or datetime) - default is 1900-01-01
             prepost : (bool) Include Pre and Post market data in results? Default is False
@@ -104,15 +105,14 @@ class TickerBase():
                     Optional. If passed as False, will suppress
                     error message printing to console.
         '''
-
         if start or period == TimePeriods.Max:
             if start is None:
                 start = -2208988800
             elif isinstance(start, datetime):
                 start = int(_time.mktime(start.timetuple()))
             else:
-                start = int(_time.mktime(
-                    _time.strptime(str(start), '%Y-%m-%d')))
+                start = int(_time.mktime(_time.strptime(str(start), '%Y-%m-%d')))
+
             if end is None:
                 end = int(_time.time())
             elif isinstance(end, datetime):
@@ -125,7 +125,7 @@ class TickerBase():
             params = {'range': period.value}
         
         self._historical_data_period = dict(params)
-        self._historical_data_interval = interval
+        self._historical_data_interval = interval.name
 
         params['interval'] = interval.value
         params['includePrePost'] = prepost
@@ -360,7 +360,7 @@ class TickerBase():
     
     def _load_dividends(self):
         if self._historical_data is None:
-            self.get_historical_data(period=TimePeriods.Max)
+            self.get_history(period=TimePeriods.Max)
 
         dividends = self._historical_data['Dividends']
         self._dividends = dividends[dividends != 0]
