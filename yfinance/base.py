@@ -47,11 +47,11 @@ class TickerBase():
         self._base_url = 'https://query1.finance.yahoo.com'
         self._scrape_url = 'https://finance.yahoo.com/quote'
 
-        self._info = None
-        self._sustainability = None
-        self._recommendations = None
-        self._major_holders = None
-        self._institutional_holders = None
+        self._info = {}
+        self._sustainability = pd.DataFrame()
+        self._recommendations = pd.DataFrame()
+        self._major_holders = pd.DataFrame()
+        self._institutional_holders = pd.DataFrame()
 
         self._calendar = None
 
@@ -64,7 +64,7 @@ class TickerBase():
 
         self._fundamentals_data = None
         self._financials_data = None
-        self._historical_data = None
+        self._historical_data = pd.DataFrame()
         self._historical_data_period = None
         self._historical_data_interval = None
 
@@ -286,23 +286,23 @@ class TickerBase():
             if isinstance(self.fundamentals_data.get(item), dict):
                 self._info.update(self.fundamentals_data[item])
 
-        self._info['regularMarketPrice'] = self._info['financialData']['currentPrice']
+        try:
+            self._info['regularMarketPrice'] = self.fundamentals_data['financialData']['currentPrice']
+        except KeyError:
+            _logger.warning('Unable to locate price data!')
+
         self._info['logo_url'] = ''
         try:
-            domain = self._info['website'].split(
-                '://')[1].split('/')[0].replace('www.', '')
-            self._info['logo_url'] = 'https://logo.clearbit.com/%s' % domain
+            domain = self._info['website'].split('://')[1].split('/')[0].replace('www.', '')
+            self._info['logo_url'] = f'https://logo.clearbit.com/{domain}'
         except Exception:
             _logger.warning('Exception occurred when trying to identify logo url')
     
     def _load_events(self):
-        cal = pd.DataFrame(
-                self.fundamentals_data['calendarEvents']['earnings'])
-        cal['earningsDate'] = pd.to_datetime(
-            cal['earningsDate'], unit='s')
+        cal = pd.DataFrame(self.fundamentals_data['calendarEvents']['earnings'])
+        cal['earningsDate'] = pd.to_datetime(cal['earningsDate'], unit='s')
         self._calendar = cal.T
         self._calendar.index = utils.camel2title(self._calendar.index)
-        self._calendar.columns = ['Value']
     
     def _load_financials_data(self):
         def _cleanup(data: Dict) -> pd.DataFrame:
@@ -366,7 +366,7 @@ class TickerBase():
         self._dividends = dividends[dividends != 0]
         
     @property
-    def fundamentals_data(self):
+    def fundamentals_data(self) -> Dict:
         if self._fundamentals_data is None:
             self._fundamentals_data = utils.get_json(
                 f'{self._scrape_url}/{self.ticker}', self._proxy)
@@ -374,7 +374,7 @@ class TickerBase():
         return self._fundamentals_data
     
     @property
-    def financials_data(self):
+    def financials_data(self) -> Dict:
         if self._financials_data is None:
             self._financials_data = utils.get_json(
                 f'{self._scrape_url}/{self.ticker}/financials', self._proxy)
