@@ -109,8 +109,8 @@ class Ticker(TickerBase):
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
         
-        _logger.info(f'Returning history for period {self._historical_data_period}'
-                     f' with interval {self._historical_data_interval}')
+        _logger.info(f'Returning {self._historical_data_interval} interval history'
+                     f' for period {self._historical_data_period}')
 
         return self._historical_data
 
@@ -158,8 +158,8 @@ class Ticker(TickerBase):
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
 
-        _logger.info(f'Returning dividends for period {self._historical_data_period}'
-                     f' with interval {self._historical_data_interval}')
+        _logger.info(f'Returning {self._historical_data_interval} interval dividend history'
+                     f' for period {self._historical_data_period}')
 
         dividends = self._historical_data["Dividends"]
         return dividends[dividends != 0]
@@ -178,8 +178,8 @@ class Ticker(TickerBase):
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
         
-        _logger.info(f'Returning splits for period {self._historical_data_period}'
-                     f' with interval {self._historical_data_interval}')
+        _logger.info(f'Returning {self._historical_data_interval} interval split history'
+                     f' for period {self._historical_data_period}')
 
         splits = self._historical_data["Stock Splits"]
         return splits[splits != 0]
@@ -202,8 +202,8 @@ class Ticker(TickerBase):
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
 
-        _logger.info(f'Returning actions for period {self._historical_data_period}'
-                     f' with interval {self._historical_data_interval}')
+        _logger.info(f'Returning {self._historical_data_interval} interval action history'
+                     f' for period {self._historical_data_period}')
 
         actions = self._historical_data[["Dividends", "Stock Splits"]]
         self._actions = actions[(actions['Dividends' != 0]) | (actions['Stock Splits'] != 0)]

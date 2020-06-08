@@ -76,7 +76,7 @@ class TickerBase():
         self._proxy =  proxy
 
     def get_history(self, 
-                    period: TimePeriods = TimePeriods.Month, 
+                    period: TimePeriods = TimePeriods.Max, 
                     interval: TimeIntervals = TimeIntervals.Daily,
                     start: Union[str, datetime, None] = None, 
                     end: Union[str, datetime, None] = None, 
@@ -124,7 +124,9 @@ class TickerBase():
         else:
             params = {'range': period.value}
         
-        self._historical_data_period = dict(params)
+        self._historical_data_period = period.name if not start \
+            else (f'{datetime.fromtimestamp(start).strftime("%Y-%m-%d")}'
+                  f' - {datetime.fromtimestamp(end).strftime("%Y-%m-%d")}')
         self._historical_data_interval = interval.name
 
         params['interval'] = interval.value
