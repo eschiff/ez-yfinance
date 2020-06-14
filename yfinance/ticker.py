@@ -31,7 +31,7 @@ from typing import Union, Dict
 from collections import namedtuple as _namedtuple
 
 from yfinance.base import TickerBase
-from yfinance.constants import TimePeriods, QUARTERLY, YEARLY
+from yfinance.constants import TimePeriods, QUARTERLY, YEARLY, HistoryColumns
 
 _logger = logging.getLogger(__file__)
 
@@ -162,7 +162,7 @@ class Ticker(TickerBase):
         _logger.info(f'Returning {self._historical_data_interval} interval dividend history'
                      f' for period {self._historical_data_period}')
 
-        dividends = self._historical_data["Dividends"]
+        dividends = self._historical_data[HistoryColumns.Dividends]
         return dividends[dividends != 0]
 
     @property
@@ -182,7 +182,7 @@ class Ticker(TickerBase):
         _logger.info(f'Returning {self._historical_data_interval} interval split history'
                      f' for period {self._historical_data_period}')
 
-        splits = self._historical_data["Stock Splits"]
+        splits = self._historical_data[HistoryColumns.Splits]
         return splits[splits != 0]
 
     @property
@@ -206,8 +206,9 @@ class Ticker(TickerBase):
         _logger.info(f'Returning {self._historical_data_interval} interval action history'
                      f' for period {self._historical_data_period}')
 
-        actions = self._historical_data[["Dividends", "Stock Splits"]]
-        self._actions = actions[(actions['Dividends' != 0]) | (actions['Stock Splits'] != 0)]
+        actions = self._historical_data[[HistoryColumns.Dividends, HistoryColumns.Splits]]
+        return actions[
+            (actions[HistoryColumns.Dividends] != 0) | (actions[HistoryColumns.Splits] != 0)]
 
     @property
     def info(self) -> Dict:

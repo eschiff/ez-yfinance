@@ -25,7 +25,9 @@ __author__ = "Ran Aroussi"
 import logging
 import sys
 
-from yfinance.constants import YEARLY, QUARTERLY, TimePeriods, TimeIntervals
+from yfinance.constants import (
+    YEARLY, QUARTERLY, TimePeriods, TimeIntervals, CashflowColumns, TickerInfoKeys,
+    BalanceSheetColumns, FinancialColumns, SustainabilityColumns)
 # from yfinance.multi import download
 # from yfinance.tickers import Tickers
 from yfinance.ticker import Ticker
@@ -55,4 +57,9 @@ __all__ = [
     YEARLY,
     QUARTERLY,
     TimeIntervals,
-    TimePeriods]
+    TimePeriods,
+    CashflowColumns,
+    TickerInfoKeys,
+    BalanceSheetColumns,
+    FinancialColumns,
+    SustainabilityColumns]
