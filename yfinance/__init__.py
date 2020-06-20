@@ -27,7 +27,8 @@ import sys
 
 from yfinance.constants import (
     YEARLY, QUARTERLY, TimePeriods, TimeIntervals, CashflowColumns, TickerInfoKeys,
-    BalanceSheetColumns, FinancialColumns, SustainabilityColumns)
+    BalanceSheetColumns, FinancialColumns, SustainabilityColumns, RecommendationColumns,
+    RecommendationGrades, EarningsColumns)
 # from yfinance.multi import download
 # from yfinance.tickers import Tickers
 from yfinance.ticker import Ticker
@@ -62,4 +63,7 @@ __all__ = [
     TickerInfoKeys,
     BalanceSheetColumns,
     FinancialColumns,
-    SustainabilityColumns]
+    SustainabilityColumns,
+    RecommendationColumns,
+    RecommendationGrades,
+    EarningsColumns]

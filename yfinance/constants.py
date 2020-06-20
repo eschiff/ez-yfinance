@@ -316,3 +316,9 @@ class RecommendationGrades:
     SectorWeight = 'Sector Weight'
     Reduce = 'Reduce'
     Underweight = 'Underweight'
+
+
+class EarningsColumns:
+    Quarter = 'Quarter'
+    Revenue = 'Revenue'
+    Earnings = 'Earnings'
