@@ -57,7 +57,7 @@ class TickerBase():
 
         self._calendar = None
 
-        self._earnings = utils.init_financial_df_dict()
+        self._earnings = utils.init_financial_df_dict(earnings=True)
         self._financials = utils.init_financial_df_dict()
         self._balancesheet = utils.init_financial_df_dict()
         self._cashflow = utils.init_financial_df_dict()
@@ -255,8 +255,12 @@ class TickerBase():
             _logger.warning("No holders found")
 
     def _load_recommendations(self):
-        rec = pd.DataFrame(
-            self.fundamentals_data['upgradeDowngradeHistory']['history'])
+        up_down_history = self.fundamentals_data['upgradeDowngradeHistory']
+        if not up_down_history:
+            return
+        rec = pd.DataFrame(self.fundamentals_data['upgradeDowngradeHistory']['history'])
+        if rec.empty:
+            return
         rec['earningsDate'] = pd.to_datetime(
             rec['epochGradeDate'], unit='s')
         rec.set_index('earningsDate', inplace=True)
@@ -312,12 +316,15 @@ class TickerBase():
 
     def _load_financials_data(self):
         def _cleanup(data: Dict) -> pd.DataFrame:
-            df = pd.DataFrame(data).drop(columns=['maxAge'])
+            df = pd.DataFrame(data)
+            if 'maxAge' in df.columns:
+                df = df.drop(columns=['maxAge'])
             for col in df.columns:
                 df[col] = np.where(
                     df[col].astype(str) == '-', np.nan, df[col])
 
-            df.set_index('endDate', inplace=True)
+            if 'endDate' in df.columns:
+                df.set_index('endDate', inplace=True)
             try:
                 df.index = pd.to_datetime(df.index, unit='s')
             except ValueError:
@@ -350,12 +357,16 @@ class TickerBase():
     def _load_earnings(self):
         if isinstance(self.financials_data.get('earnings'), dict):
             earnings = self.financials_data['earnings']['financialsChart']
-            df = pd.DataFrame(earnings[YEARLY]).set_index('date')
+            df = pd.DataFrame(earnings[YEARLY])
+            if 'date' in df.columns:
+                df.set_index('date')
             df.columns = utils.camel2title(df.columns)
             df.index.name = 'Year'
             self._earnings[YEARLY] = df
 
-            df = pd.DataFrame(earnings[QUARTERLY]).set_index('date')
+            df = pd.DataFrame(earnings[QUARTERLY])
+            if 'date' in df.columns:
+                df.set_index('date')
             df.columns = utils.camel2title(df.columns)
             df.index.name = 'Quarter'
             self._earnings[QUARTERLY] = df

@@ -43,9 +43,16 @@ def empty_df(index=[]):
     return empty
 
 
-def init_financial_df_dict():
-    return {YEARLY: empty_df(),
-            QUARTERLY: empty_df()}
+def empty_earnings_df(index=[]):
+    empty = pd.DataFrame(index=index, data={
+        'Date': np.nan, 'Revenue': np.nan, 'Earnings': np.nan})
+    empty.index.name = 'Quarter'
+    return empty
+
+
+def init_financial_df_dict(earnings=False):
+    return {YEARLY: empty_earnings_df() if earnings else empty_df(),
+            QUARTERLY: empty_earnings_df() if earnings else empty_df()}
 
 
 def get_json(url, proxy=None):

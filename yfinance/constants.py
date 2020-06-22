@@ -110,7 +110,6 @@ class CashflowColumns:
     RepurchaseOfStock = 'Repurchase Of Stock'
     TotalCashFromOperatingActivities = 'Total Cash From Operating Activities'
     Depreciation = 'Depreciation'
-    OtherCashflowFromInvestingActivities = 'Other Cashflows From Investing Activities'
     DividendsPaid = 'Dividends Paid'
     ChangeToInventory = 'Change To Inventory'
     ChangeToAccountReceivables = 'Change To Account Receivables'
