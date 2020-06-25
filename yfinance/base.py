@@ -57,10 +57,10 @@ class TickerBase():
 
         self._calendar = None
 
-        self._earnings = utils.init_financial_df_dict(earnings=True)
-        self._financials = utils.init_financial_df_dict()
-        self._balancesheet = utils.init_financial_df_dict()
-        self._cashflow = utils.init_financial_df_dict()
+        self._earnings = {YEARLY: pd.DataFrame(), QUARTERLY: pd.DataFrame()}
+        self._financials = {YEARLY: pd.DataFrame(), QUARTERLY: pd.DataFrame()}
+        self._balancesheet = {YEARLY: pd.DataFrame(), QUARTERLY: pd.DataFrame()}
+        self._cashflow = {YEARLY: pd.DataFrame(), QUARTERLY: pd.DataFrame()}
 
         self._expirations = {}
 

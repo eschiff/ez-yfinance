@@ -32,28 +32,6 @@ try:
 except ImportError:
     import json as _json
 
-from yfinance import YEARLY, QUARTERLY
-
-
-def empty_df(index=[]):
-    empty = pd.DataFrame(index=index, data={
-        'Open': np.nan, 'High': np.nan, 'Low': np.nan,
-        'Close': np.nan, 'Adj Close': np.nan, 'Volume': np.nan})
-    empty.index.name = 'Date'
-    return empty
-
-
-def empty_earnings_df(index=[]):
-    empty = pd.DataFrame(index=index, data={
-        'Date': np.nan, 'Revenue': np.nan, 'Earnings': np.nan})
-    empty.index.name = 'Quarter'
-    return empty
-
-
-def init_financial_df_dict(earnings=False):
-    return {YEARLY: empty_earnings_df() if earnings else empty_df(),
-            QUARTERLY: empty_earnings_df() if earnings else empty_df()}
-
 
 def get_json(url, proxy=None):
     html = requests.get(url=url, proxies=proxy).text
