@@ -47,21 +47,10 @@ NOTE
 
 Note from Ezra:
 
-This library was originally created by Ran Aroussi and named yfinance. I encountered
+This library was originally created by Ran Aroussi and named ``yfinance``. I encountered
 some bugs using it and wasn't able to reach him about updating his package, so I've
 renamed it for now to yfinance-ez so I can work on it. I've done some restructuring
 and added improved documentation, but the credit for most of the code is NOT mine.
-
-The library was originally named ``fix-yahoo-finance``, but
-I've since renamed it to ``yfinance`` as I no longer consider it a mere "fix".
-For reasons of backward-competability, ``fix-yahoo-finance`` now import and
-uses ``yfinance``, but you should install and use ``yfinance`` directly.
-
-`Changelog » <./CHANGELOG.rst>`__
-
------
-
-==> Check out this `Blog post <https://aroussi.com/#post/python-yahoo-finance>`_ for a detailed tutorial with code examples.
 
 -----
 
@@ -83,19 +72,21 @@ ticker data in amore Pythonic way:
     # get stock info
     msft.info
 
-    # get historical market data
-    hist = msft.history(period="max")
+    # get historical market data for the last quarter
+    # This method also accepts start and end dates and/or time intervals
+    # so you can customize what you're looking for.
+    hist = msft.get_history(period=yf.TimePeriods.Quarter)
 
-    # show actions (dividends, splits)
+    # show actions (dividends, splits) for the last retrieved historical period
     msft.actions
 
-    # show dividends
+    # show dividends for the last retrieved historical period
     msft.dividends
 
-    # show splits
+    # show splits for the last retrieved historical period
     msft.splits
 
-    # show financials
+    # show financials 
     msft.financials
     msft.quarterly_financials
 
@@ -126,13 +117,6 @@ ticker data in amore Pythonic way:
     # show next event (earnings, etc)
     msft.calendar
 
-    # show ISIN code - *experimental*
-    # ISIN = International Securities Identification Number
-    msft.isin
-
-    # show options expirations
-    msft.options
-
     # get option chain for specific expiration
     opt = msft.option_chain('YYYY-MM-DD')
     # data available via: opt.calls, opt.puts
@@ -143,99 +127,8 @@ If you want to use a proxy server for downloading data, use:
 
     import yfinance_ez as yf
 
-    msft = yf.Ticker("MSFT")
-
-    msft.history(..., proxy="PROXY_SERVER")
-    msft.get_actions(proxy="PROXY_SERVER")
-    msft.get_dividends(proxy="PROXY_SERVER")
-    msft.get_splits(proxy="PROXY_SERVER")
-    msft.get_balance_sheet(proxy="PROXY_SERVER")
-    msft.get_cashflow(proxy="PROXY_SERVER")
-    msgt.option_chain(..., proxy="PROXY_SERVER")
+    msft = yf.Ticker("MSFT", proxy="PROXY_SERVER")
     ...
-
-To initialize multiple ``Ticker`` objects, use
-
-.. code:: python
-
-    import yfinance_ez as yf
-
-    tickers = yf.Tickers('msft aapl goog')
-    # ^ returns a named tuple of Ticker objects
-
-    # access each ticker using (example)
-    tickers.msft.info
-    tickers.aapl.history(period="1mo")
-    tickers.goog.actions
-
-
-Fetching data for multiple tickers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    import yfinance_ez as yf
-    data = yf.download("SPY AAPL", start="2017-01-01", end="2017-04-30")
-
-
-I've also added some options to make life easier :)
-
-.. code:: python
-
-    data = yf.download(  # or pdr.get_data_yahoo(...
-            # tickers list or string as well
-            tickers = "SPY AAPL MSFT",
-
-            # use "period" instead of start/end
-            # valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-            # (optional, default is '1mo')
-            period = "ytd",
-
-            # fetch data by interval (including intraday if period < 60 days)
-            # valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
-            # (optional, default is '1d')
-            interval = "1m",
-
-            # group by ticker (to access via data['SPY'])
-            # (optional, default is 'column')
-            group_by = 'ticker',
-
-            # adjust all OHLC automatically
-            # (optional, default is False)
-            auto_adjust = True,
-
-            # download pre/post regular market hours data
-            # (optional, default is False)
-            prepost = True,
-
-            # use threads for mass downloading? (True/False/Integer)
-            # (optional, default is True)
-            threads = True,
-
-            # proxy URL scheme use use when downloading?
-            # (optional, default is None)
-            proxy = None
-        )
-
-
-``pandas_datareader`` override
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If your code uses ``pandas_datareader`` and you want to download data faster,
-you can "hijack" ``pandas_datareader.data.get_data_yahoo()`` method to use
-**yfinance_ez** while making sure the returned data is in the same format as
-**pandas_datareader**'s ``get_data_yahoo()``.
-
-.. code:: python
-
-    from pandas_datareader import data as pdr
-
-    import yfinance_ez as yf
-    yf.pdr_override() # <== that's all it takes :-)
-
-    # download dataframe
-    data = pdr.get_data_yahoo("SPY", start="2017-01-01", end="2017-04-30")
-
 
 Installation
 ------------
@@ -244,29 +137,16 @@ Install ``yfinance_ez`` using ``pip``:
 
 .. code:: bash
 
-    $ pip install yfinance_ez --upgrade --no-cache-dir
-
-
-Install ``yfinance_ez`` using ``conda``:
-
-.. code:: bash
-
-    $ conda install -c ranaroussi yfinance_ez
+    $ pip install yfinance_ez
 
 
 Requirements
 ------------
 
-* `Python <https://www.python.org>`_ >= 2.7, 3.4+
+* `Python <https://www.python.org>`_ >= 3.5+
 * `Pandas <https://github.com/pydata/pandas>`_ (tested to work with >=0.23.1)
 * `Numpy <http://www.numpy.org>`_ >= 1.11.1
 * `requests <http://docs.python-requests.org/en/master/>`_ >= 2.14.2
-
-
-Optional (if you want to use ``pandas_datareader``)
----------------------------------------------------
-
-* `pandas_datareader <https://github.com/pydata/pandas-datareader>`_ >= 0.4.0
 
 Legal Stuff
 ------------
@@ -279,4 +159,4 @@ P.S.
 
 Please drop me an note with any feedback you have.
 
-**Ran Aroussi**
+**Ezra Schiff**

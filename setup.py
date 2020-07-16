@@ -20,7 +20,7 @@ with io.open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='yfinance_ez',
-    version="0.2.0",
+    version="0.2.2",
     description='Yahoo! Finance market data downloader',
     long_description=long_description,
     url='https://github.com/eschiff/yfinance_ez',
