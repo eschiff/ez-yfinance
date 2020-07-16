@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# https://github.com/ranaroussi/yfinance_ez
 #
 # Copyright 2017-2019 Ran Aroussi
 #
@@ -25,13 +25,13 @@ __author__ = "Ran Aroussi"
 import logging
 import sys
 
-from yfinance.constants import (
+from yfinance_ez.constants import (
     YEARLY, QUARTERLY, TimePeriods, TimeIntervals, CashflowColumns, TickerInfoKeys,
     BalanceSheetColumns, FinancialColumns, SustainabilityColumns, RecommendationColumns,
     RecommendationGrades, EarningsColumns)
-# from yfinance.multi import download
-# from yfinance.tickers import Tickers
-from yfinance.ticker import Ticker
+# from yfinance_ez.multi import download
+# from yfinance_ez.tickers import Tickers
+from yfinance_ez.ticker import Ticker
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 _logger = logging.getLogger(__file__)

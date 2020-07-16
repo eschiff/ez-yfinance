@@ -2,7 +2,8 @@
 # -*- coding: UTF-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# built off yfinance by RanAroussi
+# https://github.com/ranaroussi/yfinance_ez
 
 """Yahoo! Finance market data downloader (+fix for Pandas Datareader)"""
 
@@ -18,19 +19,19 @@ with io.open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='yfinance',
+    name='yfinance_ez',
     version="0.2.0",
     description='Yahoo! Finance market data downloader',
     long_description=long_description,
-    url='https://github.com/ranaroussi/yfinance',
+    url='https://github.com/eschiff/yfinance_ez',
     author='Ran Aroussi',
     author_email='ran@aroussi.com',
     license='Apache',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         # 'Development Status :: 3 - Alpha',
-        # 'Development Status :: 4 - Beta',
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
+        # 'Development Status :: 5 - Production/Stable',
 
 
         'Operating System :: OS Independent',
@@ -41,8 +42,6 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
 
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# https://github.com/ranaroussi/yfinance_ez
 #
 # Copyright 2017-2019 Ran Aroussi
 #
@@ -37,7 +37,7 @@ try:
 except ImportError:
     from urllib import quote as urlencode
 
-from yfinance import utils, shared, QUARTERLY, YEARLY, TimePeriods, TimeIntervals
+from yfinance_ez import utils, shared, QUARTERLY, YEARLY, TimePeriods, TimeIntervals
 
 _logger = logging.getLogger(__file__)
 

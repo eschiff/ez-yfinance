@@ -1,4 +1,4 @@
-{% set name = "yfinance" %}
+{% set name = "yfinance_ez" %}
 {% set version = "0.2.0" %}
 
 package:
@@ -31,20 +31,20 @@ requirements:
 
 test:
   imports:
-    - yfinance
+    - yfinance_ez
 
 about:
-  home: "https://github.com/ranaroussi/yfinance"
+  home: "https://github.com/ranaroussi/yfinance_ez"
   license: "Apache Software"
   license_family: "APACHE"
   license_file: ""
   summary: "Yahoo! Finance market data downloader"
   description:
-  doc_url: "https://github.com/ranaroussi/yfinance"
-  dev_url: "https://pypi.python.org/pypi/yfinance"
-  doc_source_url: https://github.com/ranaroussi/yfinance/blob/master/README.rst
+  doc_url: "https://github.com/ranaroussi/yfinance_ez"
+  dev_url: "https://pypi.python.org/pypi/yfinance_ez"
+  doc_source_url: https://github.com/ranaroussi/yfinance_ez/blob/master/README.rst
 
 
 extra:
   recipe-maintainers:
-    - ranaroussi
+    - eschiff

@@ -65,7 +65,7 @@ Change Log
 
 0.1.44
 ------
-- Improved ``Tickers`` module (see https://github.com/ranaroussi/yfinance/issues/86)
+- Improved ``Tickers`` module (see https://github.com/ranaroussi/yfinance_ez/issues/86)
 - Misc bugfixes
 
 0.1.43
@@ -103,7 +103,7 @@ Change Log
 
 0.1.36
 ------
-- Package renamed to ``yfinance``
+- Package renamed to ``yfinance_ez``
 - Added option to specify proxy server
 
 0.1.35

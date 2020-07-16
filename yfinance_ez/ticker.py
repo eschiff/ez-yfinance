@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# https://github.com/ranaroussi/yfinance_ez
 #
 # Copyright 2017-2019 Ran Aroussi
 #
@@ -30,8 +30,8 @@ from typing import Union, Dict
 
 from collections import namedtuple as _namedtuple
 
-from yfinance.base import TickerBase
-from yfinance.constants import TimePeriods, QUARTERLY, YEARLY, HistoryColumns
+from yfinance_ez.base import TickerBase
+from yfinance_ez.constants import TimePeriods, QUARTERLY, YEARLY, HistoryColumns
 
 _logger = logging.getLogger(__file__)
 
@@ -39,7 +39,7 @@ _logger = logging.getLogger(__file__)
 class Ticker(TickerBase):
 
     def __repr__(self):
-        return f'yfinance.Ticker object <{self.ticker}>'
+        return f'yfinance_ez.Ticker object <{self.ticker}>'
 
     def _download_options(self, date=None) -> Dict:
         url = f'{self._base_url}/v7/finance/options/{self.ticker}'

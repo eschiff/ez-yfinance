@@ -2,7 +2,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
-from yfinance.base import TickerBase
+from yfinance_ez.base import TickerBase
 
 
 def test_TickerBase_init(ticker_symbol):
@@ -14,7 +14,7 @@ def test_TickerBase_init(ticker_symbol):
     assert ticker._financials_data is None
 
 
-@patch('yfinance.base.requests')
+@patch('yfinance_ez.base.requests')
 def test_TickerBase_get_history(requests_mock, ticker_symbol, historical_data_resp):
     requests_mock.get.return_value = historical_data_resp
 
@@ -24,7 +24,7 @@ def test_TickerBase_get_history(requests_mock, ticker_symbol, historical_data_re
     assert isinstance(ticker._historical_data, pd.DataFrame)
 
 
-@patch('yfinance.base.utils')
+@patch('yfinance_ez.base.utils')
 def test_TickerBase_fundamentals_data(utils_mock, ticker_symbol):
     utils_mock.get_json.return_value = 'Fake Fundamentals Data'
 
@@ -35,7 +35,7 @@ def test_TickerBase_fundamentals_data(utils_mock, ticker_symbol):
     assert utils_mock.get_json.called
 
 
-@patch('yfinance.base.utils')
+@patch('yfinance_ez.base.utils')
 def test_TickerBase_financials_data(utils_mock, ticker_symbol):
     utils_mock.get_json.return_value = 'Fake Financials Data'
 
@@ -46,7 +46,7 @@ def test_TickerBase_financials_data(utils_mock, ticker_symbol):
     assert utils_mock.get_json.called
 
 
-@patch('yfinance.base.requests')
+@patch('yfinance_ez.base.requests')
 def test_TickerBase_get_history_fails_yahoo_down(requests_mock, ticker_symbol, yahoo_down_resp):
     requests_mock.get.return_value = yahoo_down_resp
 

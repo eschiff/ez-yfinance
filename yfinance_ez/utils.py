@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# https://github.com/ranaroussi/yfinance_ez
 #
 # Copyright 2017-2019 Ran Aroussi
 #

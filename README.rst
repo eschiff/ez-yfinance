@@ -2,31 +2,31 @@ Yahoo! Finance market data downloader
 =====================================
 
 .. image:: https://img.shields.io/badge/python-2.7,%203.4+-blue.svg?style=flat
-    :target: https://pypi.python.org/pypi/yfinance
+    :target: https://pypi.python.org/pypi/yfinance_ez
     :alt: Python version
 
-.. image:: https://img.shields.io/pypi/v/yfinance.svg?maxAge=60
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/v/yfinance_ez.svg?maxAge=60
+    :target: https://pypi.python.org/pypi/yfinance_ez
     :alt: PyPi version
 
-.. image:: https://img.shields.io/pypi/status/yfinance.svg?maxAge=60
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/status/yfinance_ez.svg?maxAge=60
+    :target: https://pypi.python.org/pypi/yfinance_ez
     :alt: PyPi status
 
-.. image:: https://img.shields.io/pypi/dm/yfinance.svg?maxAge=2592000&label=installs&color=%2327B1FF
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/dm/yfinance_ez.svg?maxAge=2592000&label=installs&color=%2327B1FF
+    :target: https://pypi.python.org/pypi/yfinance_ez
     :alt: PyPi downloads
 
-.. image:: https://img.shields.io/travis/ranaroussi/yfinance/master.svg?maxAge=1
-    :target: https://travis-ci.com/ranaroussi/yfinance
+.. image:: https://img.shields.io/travis/ranaroussi/yfinance_ez/master.svg?maxAge=1
+    :target: https://travis-ci.com/ranaroussi/yfinance_ez
     :alt: Travis-CI build status
 
-.. image:: https://www.codefactor.io/repository/github/ranaroussi/yfinance/badge
-    :target: https://www.codefactor.io/repository/github/ranaroussi/yfinance
+.. image:: https://www.codefactor.io/repository/github/ranaroussi/yfinance_ez/badge
+    :target: https://www.codefactor.io/repository/github/ranaroussi/yfinance_ez
     :alt: CodeFactor
 
-.. image:: https://img.shields.io/github/stars/ranaroussi/yfinance.svg?style=social&label=Star&maxAge=60
-    :target: https://github.com/ranaroussi/yfinance
+.. image:: https://img.shields.io/github/stars/ranaroussi/yfinance_ez.svg?style=social&label=Star&maxAge=60
+    :target: https://github.com/ranaroussi/yfinance_ez
     :alt: Star this repo
 
 .. image:: https://img.shields.io/twitter/follow/aroussi.svg?style=social&label=Follow&maxAge=60
@@ -38,7 +38,7 @@ Yahoo! Finance market data downloader
 Ever since `Yahoo! finance <https://finance.yahoo.com>`_ decommissioned
 their historical data API, many programs that relied on it to stop working.
 
-**yfinance** aimes to solve this problem by offering a reliable, threaded,
+**yfinance_ez** aimes to solve this problem by offering a reliable, threaded,
 and Pythonic way to download historical market data from Yahoo! finance.
 
 
@@ -46,9 +46,9 @@ NOTE
 ~~~~
 
 The library was originally named ``fix-yahoo-finance``, but
-I've since renamed it to ``yfinance`` as I no longer consider it a mere "fix".
+I've since renamed it to ``yfinance_ez`` as I no longer consider it a mere "fix".
 For reasons of backward-competability, ``fix-yahoo-finance`` now import and
-uses ``yfinance``, but you should install and use ``yfinance`` directly.
+uses ``yfinance_ez``, but you should install and use ``yfinance_ez`` directly.
 
 `Changelog » <./CHANGELOG.rst>`__
 
@@ -69,7 +69,7 @@ ticker data in amore Pythonic way:
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinance_ez as yf
 
     msft = yf.Ticker("MSFT")
 
@@ -134,7 +134,7 @@ If you want to use a proxy server for downloading data, use:
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinance_ez as yf
 
     msft = yf.Ticker("MSFT")
 
@@ -151,7 +151,7 @@ To initialize multiple ``Ticker`` objects, use
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinance_ez as yf
 
     tickers = yf.Tickers('msft aapl goog')
     # ^ returns a named tuple of Ticker objects
@@ -167,7 +167,7 @@ Fetching data for multiple tickers
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinance_ez as yf
     data = yf.download("SPY AAPL", start="2017-01-01", end="2017-04-30")
 
 
@@ -216,14 +216,14 @@ I've also added some options to make life easier :)
 
 If your code uses ``pandas_datareader`` and you want to download data faster,
 you can "hijack" ``pandas_datareader.data.get_data_yahoo()`` method to use
-**yfinance** while making sure the returned data is in the same format as
+**yfinance_ez** while making sure the returned data is in the same format as
 **pandas_datareader**'s ``get_data_yahoo()``.
 
 .. code:: python
 
     from pandas_datareader import data as pdr
 
-    import yfinance as yf
+    import yfinance_ez as yf
     yf.pdr_override() # <== that's all it takes :-)
 
     # download dataframe
@@ -233,18 +233,18 @@ you can "hijack" ``pandas_datareader.data.get_data_yahoo()`` method to use
 Installation
 ------------
 
-Install ``yfinance`` using ``pip``:
+Install ``yfinance_ez`` using ``pip``:
 
 .. code:: bash
 
-    $ pip install yfinance --upgrade --no-cache-dir
+    $ pip install yfinance_ez --upgrade --no-cache-dir
 
 
-Install ``yfinance`` using ``conda``:
+Install ``yfinance_ez`` using ``conda``:
 
 .. code:: bash
 
-    $ conda install -c ranaroussi yfinance
+    $ conda install -c ranaroussi yfinance_ez
 
 
 Requirements
@@ -264,7 +264,7 @@ Optional (if you want to use ``pandas_datareader``)
 Legal Stuff
 ------------
 
-**yfinance** is distributed under the **Apache Software License**. See the `LICENSE.txt <./LICENSE.txt>`_ file in the release for details.
+**yfinance_ez** is distributed under the **Apache Software License**. See the `LICENSE.txt <./LICENSE.txt>`_ file in the release for details.
 
 
 P.S.

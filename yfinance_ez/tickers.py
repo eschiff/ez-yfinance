@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# https://github.com/ranaroussi/yfinance_ez
 #
 # Copyright 2017-2019 Ran Aroussi
 #
@@ -21,7 +21,7 @@
 
 from __future__ import print_function
 
-from yfinance import Ticker, multi
+from yfinance_ez import Ticker, multi
 from collections import namedtuple as _namedtuple
 
 
@@ -40,7 +40,7 @@ def genTickers(tickers):
 class Tickers():
 
     def __repr__(self):
-        return 'yfinance.Tickers object <%s>' % ",".join(self.symbols)
+        return 'yfinance_ez.Tickers object <%s>' % ",".join(self.symbols)
 
     def __init__(self, tickers):
         tickers = tickers if isinstance(
