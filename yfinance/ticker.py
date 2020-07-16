@@ -110,9 +110,6 @@ class Ticker(TickerBase):
         if self._historical_data.empty:
             self.get_history(period=TimePeriods.Max)
 
-        _logger.info(f'Returning {self._historical_data_interval} interval history'
-                     f' for period {self._historical_data_period}')
-
         return self._historical_data
 
     @property
